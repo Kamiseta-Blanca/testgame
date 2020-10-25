@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+        * { padding: 0; margin: 0; }
+        canvas { background: #000000; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="320" height="480"></canvas>
+
+
+<script>
+
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var playerX = [canvas.width/2, (canvas.width/2) - 30, (canvas.width/2) + 30];
+    var playerY = [(5 * canvas.height)/9, ((6 * canvas.height)/9) + 25, ((6 * canvas.height)/9) + 25];
+    var blaster = [];
+    var drawBlasterNow = false;
+    var copy = 0;
+    var skip = 100;
+    var upPressed = false;
+    var downPressed = false;
+    var leftPressed = false;
+    var rightPressed = false;
+    var enemyY = -50;
+    var enemyHealthRange = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var enemyHealth = 5;
+    var enemiesDefeated = 0;
+    var worldLevel = 1;
+    var exp = 0;
+    var upgradeLevel = 1;
+    var upgradeCost = 5;
+    var chargeX = canvas.width - 310;
+    var chargeWidth = (300/skip);
+    var limit = 0;
+    var chargeRects = [];
+    var leftSideBlasterX = [(1 * canvas.width)/4, ((1 * canvas.width)/4) - 15, ((1 * canvas.width)/4) + 15];
+    var leftSideBlasterY = [(5 * canvas.height)/9 + 30, ((6 * canvas.height)/9) + 25, ((6 * canvas.height)/9) + 25];
+    var leftSideCopy = 0;
+    var leftSideSkip = 100;
+    var leftSideBlast = [];
+    var leftSideUpgradeCost = 15;
+    var leftSideUpgradeLevel = 0;
+    var rightSideBlasterX = [(3 * canvas.width)/4, ((3 * canvas.width)/4) - 15, ((3 * canvas.width)/4) + 15];
+    var rightSideBlasterY = [(5 * canvas.height)/9 + 30, ((6 * canvas.height)/9) + 25, ((6 * canvas.height)/9) + 25];
+    var rightSideCopy = 0;
+    var rightSideSkip = 100;
+    var rightSideBlast = [];
+    var rightSideUpgradeCost = 15;
+    var rightSideUpgradeLevel = 0;
+
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+
+    function keyDownHandler(e) {
+        if (e.key == "Up" || e.key == "ArrowUp") {
+            upPressed = true;
+        } else if (e.key == "Down" || e.key == "ArrowDown") {
+            downPressed = true;
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = true;
+        } else if (e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = true;
+        }
+    }
+
+
+    function keyUpHandler(e) {
+        if (e.key == "Up" || e.key == "ArrowUp") {
+            upPressed = false;
+        } else if (e.key == "Down" || e.key == "ArrowDown") {
+            downPressed = false;
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = false;
+        } else if (e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = false;
+        }
+    }
+
+
+    function Blaster(blasterX, blasterY, Status, Checked) {
+        this.x = blasterX;
+        this.y = blasterY;
+        this.status = Status;
+        this.check = Checked;
+    }
+
+    function leftSideBlaster(blasterX, blasterY, Status, Checked) {
+        this.x = blasterX;
+        this.y = blasterY;
+        this.status = Status;
+        this.check = Checked;
+    }
+
+    function rightSideBlaster(blasterX, blasterY, Status, Checked) {
+        this.x = blasterX;
+        this.y = blasterY;
+        this.status = Status;
+        this.check = Checked;
+    }
+
+    function Charge(chargeX, chargeWidth) {
+        this.x = chargeX;
+        this.width = chargeWidth;
+    }
+
+
+    function drawPlayerTriangle() {
+        ctx.beginPath();
+        ctx.moveTo(playerX[0], playerY[0]);
+        for (var c = 1; c < 3; c++) {
+            ctx.lineTo(playerX[c], playerY[c]);
+        }
+        ctx.fillStyle = "#eeeeee";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawLeftSideTriangle() {
+        ctx.beginPath();
+        ctx.moveTo(leftSideBlasterX[0], leftSideBlasterY[0]);
+        for (var c = 1; c < 3; c++) {
+            ctx.lineTo(leftSideBlasterX[c], leftSideBlasterY[c]);
+        }
+        ctx.fillStyle = "#eeeeee";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawRightSideTriangle() {
+        ctx.beginPath();
+        ctx.moveTo(rightSideBlasterX[0], rightSideBlasterY[0]);
+        for (var c = 1; c < 3; c++) {
+            ctx.lineTo(rightSideBlasterX[c], rightSideBlasterY[c]);
+        }
+        ctx.fillStyle = "#eeeeee";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+
+    function drawBlaster() {
+        for (var c = 0; c < copy; c++) {
+            if (blaster[c].status == 1 && c % skip == 0) {
+                ctx.beginPath();
+                ctx.rect(blaster[c].x, blaster[c].y, 5, 25);
+                ctx.fillStyle = "#eeeeee";
+                ctx.fill();
+                ctx.closePath();
+                blaster[c].y -= 4;
+            } else if (c % skip != 0) {
+                blaster[c].status = 0;
+                blaster[c].check = 0;
+            }
+        }
+    }
+
+    function drawLeftSideBlaster() {
+        for (var c = 0; c < leftSideCopy; c++) {
+            if (leftSideBlast[c].status == 1 && c % leftSideSkip == 0) {
+                ctx.beginPath();
+                ctx.rect(leftSideBlast[c].x, leftSideBlast[c].y, 5, 25);
+                ctx.fillStyle = "#eeeeee";
+                ctx.fill();
+                ctx.closePath();
+                leftSideBlast[c].y -= 4;
+            } else if (c % leftSideSkip != 0) {
+                leftSideBlast[c].status = 0;
+                leftSideBlast[c].check = 0;
+            }
+        }
+    }
+
+    function drawRightSideBlaster() {
+        for (var c = 0; c < rightSideCopy; c++) {
+            if (rightSideBlast[c].status == 1 && c % rightSideSkip == 0) {
+                ctx.beginPath();
+                ctx.rect(rightSideBlast[c].x, rightSideBlast[c].y, 5, 25);
+                ctx.fillStyle = "#eeeeee";
+                ctx.fill();
+                ctx.closePath();
+                rightSideBlast[c].y -= 4;
+            } else if (c % rightSideSkip != 0) {
+                rightSideBlast[c].status = 0;
+                rightSideBlast[c].check = 0;
+            }
+        }
+    }
+
+    function drawEnemy() {
+        ctx.beginPath();
+        ctx.rect(20, enemyY, (canvas.width - 40), 50);
+        ctx.fillStyle = "#eeeeee";
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawChargeBar() {
+        for (var c = 0; c < limit; c++) {
+            ctx.beginPath();
+            ctx.rect(chargeRects[c].x, 370, chargeRects[c].width, 30);
+            ctx.fillStyle = "#eeeeee";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+    }
+
+    function collisionDetection() {
+        for (var c = 0; c < copy; c++) {
+            if ((blaster[c].y < (enemyY + 40)) && ((c % skip) == 0) && blaster[c].check == 1) {
+                blaster[c].status = 0;
+                blaster[c].check = 0;
+                enemyHealth--;
+            }
+        }
+
+        for (var c = 0; c < leftSideCopy; c++) {
+            if ((leftSideBlast[c].y < (enemyY + 40)) && ((c % leftSideSkip) == 0) && leftSideBlast[c].check == 1) {
+                leftSideBlast[c].status = 0;
+                leftSideBlast[c].check = 0;
+                enemyHealth--;
+            }
+        }
+
+        for (var c = 0; c < rightSideCopy; c++) {
+            if ((rightSideBlast[c].y < (enemyY + 40)) && ((c % rightSideSkip) == 0) && rightSideBlast[c].check == 1) {
+                rightSideBlast[c].status = 0;
+                rightSideBlast[c].check = 0;
+                enemyHealth--;
+            }
+        }
+    }
+
+
+    function respawnEnemy() {
+        if (enemyHealth <= 0) {
+            enemyY = -50;
+            enemiesDefeated++;
+            exp = exp + (Math.pow(worldLevel, 3));
+            if (enemiesDefeated % 10 == 0) {
+                worldLevel++;
+            }
+            setEnemyHealth();
+        }
+    }
+
+    function setEnemyHealth() {
+        if (enemyHealth <= 0) {
+            enemyHealth = enemyHealthRange[Math.floor(Math.random() * (10))] * worldLevel;
+        }
+    }
+
+    function drawEnemyHealth() {
+        ctx.font = "25px Impact";
+        ctx.fillStyle = "#000000";
+        ctx.fillText("Enemy Health: " + enemyHealth, canvas.width - 240, enemyY + 35);
+    }
+
+    function drawCharge() {
+        ctx.font = "25px Impact";
+        ctx.fillStyle = "#000000";
+        ctx.fillText("C   H   A   R   G   I   N   G", canvas.width/3 - 40, 395);
+    }
+
+
+    function drawText() {
+        ctx.font = "20px Arial";
+        ctx.fillStyle = "#eeeeee";
+        ctx.fillText("Money: $" + exp, canvas.width - 300, 150)
+        ctx.fillText("Enemies Defeated: " + enemiesDefeated, canvas.width - 300, 175)
+        ctx.fillText("World Level: " + worldLevel, canvas.width - 300, 200);
+        ctx.fillText("↑ to shoot", canvas.width - 300, 225);
+        ctx.font = "15px Arial";
+        ctx.fillText("↓ - Upgrade Cost: " + upgradeCost, canvas.width - 310, 425);
+        if (leftSideUpgradeLevel == 0) {
+            ctx.fillText("← - Purchase Left Side Blaster: " + leftSideUpgradeCost, canvas.width - 310, 445);
+        } else {
+            ctx.fillText("← - Upgrade Left Side Blaster: " + leftSideUpgradeCost, canvas.width - 310, 445);
+        }
+
+        if (rightSideUpgradeLevel == 0) {
+            ctx.fillText("→ - Purchase Right Side Blaster: " + rightSideUpgradeCost, canvas.width - 310, 465);
+        } else {
+            ctx.fillText("→ - Upgrade Right Side Blaster: " + rightSideUpgradeCost, canvas.width - 310, 465);
+        }
+    }
+
+
+    function upgrade() {
+        if ((exp >= upgradeCost) && downPressed) {
+            exp -= upgradeCost;
+            upgradeLevel++;
+            upgradeCost = upgradeCost + (Math.pow(upgradeLevel, 3));
+            skip = Math.floor((100/Math.sqrt(upgradeLevel)));
+            limit = Math.floor((copy % skip));
+            chargeX = 10;
+            chargeWidth = Math.floor(300/skip);
+        }
+
+        if ((exp >= leftSideUpgradeCost) && leftPressed) {
+            exp -= leftSideUpgradeCost;
+            leftSideUpgradeLevel++;
+            leftSideUpgradeCost = leftSideUpgradeCost + (Math.pow(leftSideUpgradeLevel, 4));
+            leftSideSkip = Math.floor((100/Math.sqrt(leftSideUpgradeLevel)));
+        }
+
+        if ((exp >= rightSideUpgradeCost) && rightPressed) {
+            exp -= rightSideUpgradeCost;
+            rightSideUpgradeLevel++;
+            rightSideUpgradeCost = rightSideUpgradeCost + (Math.pow(rightSideUpgradeLevel, 4));
+            rightSideSkip = Math.floor((100/Math.sqrt(rightSideUpgradeLevel)));
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawChargeBar();
+        drawCharge();
+        drawPlayerTriangle();
+        if (leftSideUpgradeLevel > 0) {
+            drawLeftSideTriangle();
+            leftSideBlast[leftSideCopy] = new leftSideBlaster(leftSideBlasterX[0] - 2.5, leftSideBlasterY[0] - 10, 1, 1);
+            leftSideCopy++;
+            drawLeftSideBlaster();
+        }
+
+        if (rightSideUpgradeLevel > 0) {
+            drawRightSideTriangle();
+            rightSideBlast[rightSideCopy] = new rightSideBlaster(rightSideBlasterX[0] - 2.5, rightSideBlasterY[0] - 10, 1, 1);
+            rightSideCopy++;
+            drawRightSideBlaster();
+        }
+        drawEnemy();
+        drawEnemyHealth();
+        drawText();
+        respawnEnemy();
+        if (upPressed) {
+            drawBlasterNow = true;
+            blaster[copy] = new Blaster(playerX[0] - 2.5, playerY[0] - 10, 1, 1);
+            copy++;
+            if (limit == (skip - 1)) {
+                limit = Math.floor((copy % skip));
+                chargeX = 10;
+                chargeWidth = Math.floor(300/skip);
+            } else {
+                chargeRects[limit] = new Charge(chargeX, chargeWidth)
+                chargeX += chargeWidth;
+                limit++;
+            }
+        }
+
+
+        collisionDetection();
+
+        if (drawBlasterNow) {
+            drawBlaster();
+        }
+
+        if (enemyY < 10) {
+            enemyY++;
+        }
+
+        upgrade();
+
+        requestAnimationFrame(draw);
+
+    }
+
+    draw();
+
+</script>
+
+</body>
+</html>
