@@ -1,0 +1,404 @@
+<html>
+<head>
+<title>index.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #e8bf6a;}
+.s1 { color: #bababa;}
+.s2 { color: #a9b7c6;}
+.s3 { color: #a5c261;}
+.s4 { color: #a9b7c6;}
+.s5 { color: #6897bb;}
+.s6 { color: #cc7832;}
+.s7 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+index.html</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;!DOCTYPE </span><span class="s1">html</span><span class="s0">&gt;</span>
+<span class="s0">&lt;html </span><span class="s1">lang</span><span class="s3">=&quot;en&quot;</span><span class="s0">&gt;</span>
+<span class="s0">&lt;head&gt;</span>
+    <span class="s0">&lt;meta </span><span class="s1">charset</span><span class="s3">=&quot;UTF-8&quot;</span><span class="s0">&gt;</span>
+    <span class="s0">&lt;title&gt;</span><span class="s4">Gamedev Canvas Workshop</span><span class="s0">&lt;/title&gt;</span>
+    <span class="s0">&lt;style&gt;</span>
+        <span class="s0">* </span><span class="s4">{ </span><span class="s1">padding</span><span class="s4">: </span><span class="s5">0</span><span class="s6">; </span><span class="s1">margin</span><span class="s4">: </span><span class="s5">0</span><span class="s6">; </span><span class="s4">}</span>
+        <span class="s0">canvas </span><span class="s4">{ </span><span class="s1">background</span><span class="s4">: </span><span class="s5">#000000</span><span class="s6">; </span><span class="s1">display</span><span class="s4">: </span><span class="s3">block</span><span class="s6">; </span><span class="s1">margin</span><span class="s4">: </span><span class="s5">0 </span><span class="s3">auto</span><span class="s6">; </span><span class="s4">}</span>
+    <span class="s0">&lt;/style&gt;</span>
+<span class="s0">&lt;/head&gt;</span>
+<span class="s0">&lt;body&gt;</span>
+
+<span class="s0">&lt;canvas </span><span class="s1">id</span><span class="s3">=&quot;myCanvas&quot; </span><span class="s1">width</span><span class="s3">=&quot;320&quot; </span><span class="s1">height</span><span class="s3">=&quot;480&quot;</span><span class="s0">&gt;&lt;/canvas&gt;</span>
+
+
+<span class="s0">&lt;script&gt;</span>
+
+    <span class="s6">var </span><span class="s2">canvas = document.getElementById(</span><span class="s7">&quot;myCanvas&quot;</span><span class="s4">)</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">ctx = canvas.getContext(</span><span class="s7">&quot;2d&quot;</span><span class="s4">)</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">playerX = [canvas.width/</span><span class="s5">2</span><span class="s6">, </span><span class="s4">(canvas.width/</span><span class="s5">2</span><span class="s4">) - </span><span class="s5">30</span><span class="s6">, </span><span class="s4">(canvas.width/</span><span class="s5">2</span><span class="s4">) + </span><span class="s5">30</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">playerY = [(</span><span class="s5">5 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">blaster = []</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">drawBlasterNow = </span><span class="s6">false;</span>
+    <span class="s6">var </span><span class="s2">copy = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">skip = </span><span class="s5">100</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">upPressed = </span><span class="s6">false;</span>
+    <span class="s6">var </span><span class="s2">downPressed = </span><span class="s6">false;</span>
+    <span class="s6">var </span><span class="s2">leftPressed = </span><span class="s6">false;</span>
+    <span class="s6">var </span><span class="s2">rightPressed = </span><span class="s6">false;</span>
+    <span class="s6">var </span><span class="s2">enemyY = -</span><span class="s5">50</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">enemyHealthRange = [</span><span class="s5">1</span><span class="s6">, </span><span class="s5">2</span><span class="s6">, </span><span class="s5">3</span><span class="s6">, </span><span class="s5">4</span><span class="s6">, </span><span class="s5">5</span><span class="s6">, </span><span class="s5">6</span><span class="s6">, </span><span class="s5">7</span><span class="s6">, </span><span class="s5">8</span><span class="s6">, </span><span class="s5">9</span><span class="s6">, </span><span class="s5">10</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">enemyHealth = </span><span class="s5">5</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">enemiesDefeated = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">worldLevel = </span><span class="s5">1</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">exp = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">upgradeLevel = </span><span class="s5">1</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">upgradeCost = </span><span class="s5">5</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">chargeX = canvas.width - </span><span class="s5">310</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">chargeWidth = (</span><span class="s5">300</span><span class="s4">/skip)</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">limit = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">chargeRects = []</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideBlasterX = [(</span><span class="s5">1 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s6">, </span><span class="s4">((</span><span class="s5">1 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s4">) - </span><span class="s5">15</span><span class="s6">, </span><span class="s4">((</span><span class="s5">1 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s4">) + </span><span class="s5">15</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideBlasterY = [(</span><span class="s5">5 </span><span class="s4">* canvas.height)/</span><span class="s5">9 </span><span class="s4">+ </span><span class="s5">30</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideCopy = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideSkip = </span><span class="s5">100</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideBlast = []</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideUpgradeCost = </span><span class="s5">15</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">leftSideUpgradeLevel = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideBlasterX = [(</span><span class="s5">3 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s6">, </span><span class="s4">((</span><span class="s5">3 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s4">) - </span><span class="s5">15</span><span class="s6">, </span><span class="s4">((</span><span class="s5">3 </span><span class="s4">* canvas.width)/</span><span class="s5">4</span><span class="s4">) + </span><span class="s5">15</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideBlasterY = [(</span><span class="s5">5 </span><span class="s4">* canvas.height)/</span><span class="s5">9 </span><span class="s4">+ </span><span class="s5">30</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s6">, </span><span class="s4">((</span><span class="s5">6 </span><span class="s4">* canvas.height)/</span><span class="s5">9</span><span class="s4">) + </span><span class="s5">25</span><span class="s4">]</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideCopy = </span><span class="s5">0</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideSkip = </span><span class="s5">100</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideBlast = []</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideUpgradeCost = </span><span class="s5">15</span><span class="s6">;</span>
+    <span class="s6">var </span><span class="s2">rightSideUpgradeLevel = </span><span class="s5">0</span><span class="s6">;</span>
+
+    <span class="s2">document.addEventListener(</span><span class="s7">&quot;keydown&quot;</span><span class="s6">, </span><span class="s2">keyDownHandler</span><span class="s6">, false</span><span class="s4">)</span><span class="s6">;</span>
+    <span class="s2">document.addEventListener(</span><span class="s7">&quot;keyup&quot;</span><span class="s6">, </span><span class="s2">keyUpHandler</span><span class="s6">, false</span><span class="s4">)</span><span class="s6">;</span>
+
+
+    <span class="s6">function </span><span class="s2">keyDownHandler(e) {</span>
+        <span class="s6">if </span><span class="s4">(e.key == </span><span class="s7">&quot;Up&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowUp&quot;</span><span class="s4">) {</span>
+            <span class="s2">upPressed = </span><span class="s6">true;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Down&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowDown&quot;</span><span class="s4">) {</span>
+            <span class="s2">downPressed = </span><span class="s6">true;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Left&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowLeft&quot;</span><span class="s4">) {</span>
+            <span class="s2">leftPressed = </span><span class="s6">true;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Right&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowRight&quot;</span><span class="s4">) {</span>
+            <span class="s2">rightPressed = </span><span class="s6">true;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">keyUpHandler(e) {</span>
+        <span class="s6">if </span><span class="s4">(e.key == </span><span class="s7">&quot;Up&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowUp&quot;</span><span class="s4">) {</span>
+            <span class="s2">upPressed = </span><span class="s6">false;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Down&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowDown&quot;</span><span class="s4">) {</span>
+            <span class="s2">downPressed = </span><span class="s6">false;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Left&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowLeft&quot;</span><span class="s4">) {</span>
+            <span class="s2">leftPressed = </span><span class="s6">false;</span>
+        <span class="s4">} </span><span class="s6">else if </span><span class="s4">(e.key == </span><span class="s7">&quot;Right&quot; </span><span class="s4">|| e.key == </span><span class="s7">&quot;ArrowRight&quot;</span><span class="s4">) {</span>
+            <span class="s2">rightPressed = </span><span class="s6">false;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">Blaster(blasterX</span><span class="s6">, </span><span class="s2">blasterY</span><span class="s6">, </span><span class="s2">Status</span><span class="s6">, </span><span class="s2">Checked) {</span>
+        <span class="s6">this</span><span class="s4">.x = blasterX</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.y = blasterY</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.status = Status</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.check = Checked</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">leftSideBlaster(blasterX</span><span class="s6">, </span><span class="s2">blasterY</span><span class="s6">, </span><span class="s2">Status</span><span class="s6">, </span><span class="s2">Checked) {</span>
+        <span class="s6">this</span><span class="s4">.x = blasterX</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.y = blasterY</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.status = Status</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.check = Checked</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">rightSideBlaster(blasterX</span><span class="s6">, </span><span class="s2">blasterY</span><span class="s6">, </span><span class="s2">Status</span><span class="s6">, </span><span class="s2">Checked) {</span>
+        <span class="s6">this</span><span class="s4">.x = blasterX</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.y = blasterY</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.status = Status</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.check = Checked</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">Charge(chargeX</span><span class="s6">, </span><span class="s2">chargeWidth) {</span>
+        <span class="s6">this</span><span class="s4">.x = chargeX</span><span class="s6">;</span>
+        <span class="s6">this</span><span class="s4">.width = chargeWidth</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">drawPlayerTriangle() {</span>
+        <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+        <span class="s2">ctx.moveTo(playerX[</span><span class="s5">0</span><span class="s4">]</span><span class="s6">, </span><span class="s2">playerY[</span><span class="s5">0</span><span class="s4">])</span><span class="s6">;</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">1</span><span class="s6">; </span><span class="s2">c &lt; </span><span class="s5">3</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s2">ctx.lineTo(playerX[c]</span><span class="s6">, </span><span class="s2">playerY[c])</span><span class="s6">;</span>
+        <span class="s4">}</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fill()</span><span class="s6">;</span>
+        <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawLeftSideTriangle() {</span>
+        <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+        <span class="s2">ctx.moveTo(leftSideBlasterX[</span><span class="s5">0</span><span class="s4">]</span><span class="s6">, </span><span class="s2">leftSideBlasterY[</span><span class="s5">0</span><span class="s4">])</span><span class="s6">;</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">1</span><span class="s6">; </span><span class="s2">c &lt; </span><span class="s5">3</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s2">ctx.lineTo(leftSideBlasterX[c]</span><span class="s6">, </span><span class="s2">leftSideBlasterY[c])</span><span class="s6">;</span>
+        <span class="s4">}</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fill()</span><span class="s6">;</span>
+        <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawRightSideTriangle() {</span>
+        <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+        <span class="s2">ctx.moveTo(rightSideBlasterX[</span><span class="s5">0</span><span class="s4">]</span><span class="s6">, </span><span class="s2">rightSideBlasterY[</span><span class="s5">0</span><span class="s4">])</span><span class="s6">;</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">1</span><span class="s6">; </span><span class="s2">c &lt; </span><span class="s5">3</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s2">ctx.lineTo(rightSideBlasterX[c]</span><span class="s6">, </span><span class="s2">rightSideBlasterY[c])</span><span class="s6">;</span>
+        <span class="s4">}</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fill()</span><span class="s6">;</span>
+        <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">drawBlaster() {</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; copy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">(blaster[c].status == </span><span class="s5">1 </span><span class="s4">&amp;&amp; c % skip == </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+                <span class="s2">ctx.rect(blaster[c].x</span><span class="s6">, </span><span class="s2">blaster[c].y</span><span class="s6">, </span><span class="s5">5</span><span class="s6">, </span><span class="s5">25</span><span class="s4">)</span><span class="s6">;</span>
+                <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+                <span class="s2">ctx.fill()</span><span class="s6">;</span>
+                <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+                <span class="s2">blaster[c].y -= </span><span class="s5">4</span><span class="s6">;</span>
+            <span class="s4">} </span><span class="s6">else if </span><span class="s4">(c % skip != </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">blaster[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">blaster[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawLeftSideBlaster() {</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; leftSideCopy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">(leftSideBlast[c].status == </span><span class="s5">1 </span><span class="s4">&amp;&amp; c % leftSideSkip == </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+                <span class="s2">ctx.rect(leftSideBlast[c].x</span><span class="s6">, </span><span class="s2">leftSideBlast[c].y</span><span class="s6">, </span><span class="s5">5</span><span class="s6">, </span><span class="s5">25</span><span class="s4">)</span><span class="s6">;</span>
+                <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+                <span class="s2">ctx.fill()</span><span class="s6">;</span>
+                <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+                <span class="s2">leftSideBlast[c].y -= </span><span class="s5">4</span><span class="s6">;</span>
+            <span class="s4">} </span><span class="s6">else if </span><span class="s4">(c % leftSideSkip != </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">leftSideBlast[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">leftSideBlast[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawRightSideBlaster() {</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; rightSideCopy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">(rightSideBlast[c].status == </span><span class="s5">1 </span><span class="s4">&amp;&amp; c % rightSideSkip == </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+                <span class="s2">ctx.rect(rightSideBlast[c].x</span><span class="s6">, </span><span class="s2">rightSideBlast[c].y</span><span class="s6">, </span><span class="s5">5</span><span class="s6">, </span><span class="s5">25</span><span class="s4">)</span><span class="s6">;</span>
+                <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+                <span class="s2">ctx.fill()</span><span class="s6">;</span>
+                <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+                <span class="s2">rightSideBlast[c].y -= </span><span class="s5">4</span><span class="s6">;</span>
+            <span class="s4">} </span><span class="s6">else if </span><span class="s4">(c % rightSideSkip != </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">rightSideBlast[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">rightSideBlast[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawEnemy() {</span>
+        <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+        <span class="s2">ctx.rect(</span><span class="s5">20</span><span class="s6">, </span><span class="s2">enemyY</span><span class="s6">, </span><span class="s4">(canvas.width - </span><span class="s5">40</span><span class="s4">)</span><span class="s6">, </span><span class="s5">50</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fill()</span><span class="s6">;</span>
+        <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawChargeBar() {</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; limit</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s2">ctx.beginPath()</span><span class="s6">;</span>
+            <span class="s2">ctx.rect(chargeRects[c].x</span><span class="s6">, </span><span class="s5">370</span><span class="s6">, </span><span class="s2">chargeRects[c].width</span><span class="s6">, </span><span class="s5">30</span><span class="s4">)</span><span class="s6">;</span>
+            <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+            <span class="s2">ctx.fill()</span><span class="s6">;</span>
+            <span class="s2">ctx.closePath()</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">collisionDetection() {</span>
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; copy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">((blaster[c].y &lt; (enemyY + </span><span class="s5">40</span><span class="s4">)) &amp;&amp; ((c % skip) == </span><span class="s5">0</span><span class="s4">) &amp;&amp; blaster[c].check == </span><span class="s5">1</span><span class="s4">) {</span>
+                <span class="s2">blaster[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">blaster[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">enemyHealth--</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; leftSideCopy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">((leftSideBlast[c].y &lt; (enemyY + </span><span class="s5">40</span><span class="s4">)) &amp;&amp; ((c % leftSideSkip) == </span><span class="s5">0</span><span class="s4">) &amp;&amp; leftSideBlast[c].check == </span><span class="s5">1</span><span class="s4">) {</span>
+                <span class="s2">leftSideBlast[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">leftSideBlast[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">enemyHealth--</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+
+        <span class="s6">for </span><span class="s4">(</span><span class="s6">var </span><span class="s2">c = </span><span class="s5">0</span><span class="s6">; </span><span class="s2">c &lt; rightSideCopy</span><span class="s6">; </span><span class="s2">c++) {</span>
+            <span class="s6">if </span><span class="s4">((rightSideBlast[c].y &lt; (enemyY + </span><span class="s5">40</span><span class="s4">)) &amp;&amp; ((c % rightSideSkip) == </span><span class="s5">0</span><span class="s4">) &amp;&amp; rightSideBlast[c].check == </span><span class="s5">1</span><span class="s4">) {</span>
+                <span class="s2">rightSideBlast[c].status = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">rightSideBlast[c].check = </span><span class="s5">0</span><span class="s6">;</span>
+                <span class="s2">enemyHealth--</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">respawnEnemy() {</span>
+        <span class="s6">if </span><span class="s4">(enemyHealth &lt;= </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">enemyY = -</span><span class="s5">50</span><span class="s6">;</span>
+            <span class="s2">enemiesDefeated++</span><span class="s6">;</span>
+            <span class="s2">exp = exp + (Math.pow(worldLevel</span><span class="s6">, </span><span class="s5">3</span><span class="s4">))</span><span class="s6">;</span>
+            <span class="s6">if </span><span class="s4">(enemiesDefeated % </span><span class="s5">10 </span><span class="s4">== </span><span class="s5">0</span><span class="s4">) {</span>
+                <span class="s2">worldLevel++</span><span class="s6">;</span>
+            <span class="s4">}</span>
+            <span class="s2">setEnemyHealth()</span><span class="s6">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">setEnemyHealth() {</span>
+        <span class="s6">if </span><span class="s4">(enemyHealth &lt;= </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">enemyHealth = enemyHealthRange[Math.floor(Math.random() * (</span><span class="s5">10</span><span class="s4">))] * worldLevel</span><span class="s6">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawEnemyHealth() {</span>
+        <span class="s2">ctx.font = </span><span class="s7">&quot;25px Impact&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#000000&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;Enemy Health: &quot; </span><span class="s4">+ enemyHealth</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">240</span><span class="s6">, </span><span class="s2">enemyY + </span><span class="s5">35</span><span class="s4">)</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">drawCharge() {</span>
+        <span class="s2">ctx.font = </span><span class="s7">&quot;25px Impact&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#000000&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;C   H   A   R   G   I   N   G&quot;</span><span class="s6">, </span><span class="s2">canvas.width/</span><span class="s5">3 </span><span class="s4">- </span><span class="s5">40</span><span class="s6">, </span><span class="s5">395</span><span class="s4">)</span><span class="s6">;</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">drawText() {</span>
+        <span class="s2">ctx.font = </span><span class="s7">&quot;20px Arial&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillStyle = </span><span class="s7">&quot;#eeeeee&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;Money: $&quot; </span><span class="s4">+ exp</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">300</span><span class="s6">, </span><span class="s5">150</span><span class="s4">)</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;Enemies Defeated: &quot; </span><span class="s4">+ enemiesDefeated</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">300</span><span class="s6">, </span><span class="s5">175</span><span class="s4">)</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;World Level: &quot; </span><span class="s4">+ worldLevel</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">300</span><span class="s6">, </span><span class="s5">200</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;↑ to shoot&quot;</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">300</span><span class="s6">, </span><span class="s5">225</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s2">ctx.font = </span><span class="s7">&quot;15px Arial&quot;</span><span class="s6">;</span>
+        <span class="s2">ctx.fillText(</span><span class="s7">&quot;↓ - Upgrade Cost: &quot; </span><span class="s4">+ upgradeCost</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">310</span><span class="s6">, </span><span class="s5">425</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s6">if </span><span class="s4">(leftSideUpgradeLevel == </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">ctx.fillText(</span><span class="s7">&quot;← - Purchase Left Side Blaster: &quot; </span><span class="s4">+ leftSideUpgradeCost</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">310</span><span class="s6">, </span><span class="s5">445</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s4">} </span><span class="s6">else </span><span class="s4">{</span>
+            <span class="s2">ctx.fillText(</span><span class="s7">&quot;← - Upgrade Left Side Blaster: &quot; </span><span class="s4">+ leftSideUpgradeCost</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">310</span><span class="s6">, </span><span class="s5">445</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s6">if </span><span class="s4">(rightSideUpgradeLevel == </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">ctx.fillText(</span><span class="s7">&quot;→ - Purchase Right Side Blaster: &quot; </span><span class="s4">+ rightSideUpgradeCost</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">310</span><span class="s6">, </span><span class="s5">465</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s4">} </span><span class="s6">else </span><span class="s4">{</span>
+            <span class="s2">ctx.fillText(</span><span class="s7">&quot;→ - Upgrade Right Side Blaster: &quot; </span><span class="s4">+ rightSideUpgradeCost</span><span class="s6">, </span><span class="s2">canvas.width - </span><span class="s5">310</span><span class="s6">, </span><span class="s5">465</span><span class="s4">)</span><span class="s6">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+
+    <span class="s6">function </span><span class="s2">upgrade() {</span>
+        <span class="s6">if </span><span class="s4">((exp &gt;= upgradeCost) &amp;&amp; downPressed) {</span>
+            <span class="s2">exp -= upgradeCost</span><span class="s6">;</span>
+            <span class="s2">upgradeLevel++</span><span class="s6">;</span>
+            <span class="s2">upgradeCost = upgradeCost + (Math.pow(upgradeLevel</span><span class="s6">, </span><span class="s5">3</span><span class="s4">))</span><span class="s6">;</span>
+            <span class="s2">skip = Math.floor((</span><span class="s5">100</span><span class="s4">/Math.sqrt(upgradeLevel)))</span><span class="s6">;</span>
+            <span class="s2">limit = Math.floor((copy % skip))</span><span class="s6">;</span>
+            <span class="s2">chargeX = </span><span class="s5">10</span><span class="s6">;</span>
+            <span class="s2">chargeWidth = Math.floor(</span><span class="s5">300</span><span class="s4">/skip)</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s6">if </span><span class="s4">((exp &gt;= leftSideUpgradeCost) &amp;&amp; leftPressed) {</span>
+            <span class="s2">exp -= leftSideUpgradeCost</span><span class="s6">;</span>
+            <span class="s2">leftSideUpgradeLevel++</span><span class="s6">;</span>
+            <span class="s2">leftSideUpgradeCost = leftSideUpgradeCost + (Math.pow(leftSideUpgradeLevel</span><span class="s6">, </span><span class="s5">4</span><span class="s4">))</span><span class="s6">;</span>
+            <span class="s2">leftSideSkip = Math.floor((</span><span class="s5">100</span><span class="s4">/Math.sqrt(leftSideUpgradeLevel)))</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s6">if </span><span class="s4">((exp &gt;= rightSideUpgradeCost) &amp;&amp; rightPressed) {</span>
+            <span class="s2">exp -= rightSideUpgradeCost</span><span class="s6">;</span>
+            <span class="s2">rightSideUpgradeLevel++</span><span class="s6">;</span>
+            <span class="s2">rightSideUpgradeCost = rightSideUpgradeCost + (Math.pow(rightSideUpgradeLevel</span><span class="s6">, </span><span class="s5">4</span><span class="s4">))</span><span class="s6">;</span>
+            <span class="s2">rightSideSkip = Math.floor((</span><span class="s5">100</span><span class="s4">/Math.sqrt(rightSideUpgradeLevel)))</span><span class="s6">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s6">function </span><span class="s2">draw() {</span>
+        <span class="s2">ctx.clearRect(</span><span class="s5">0</span><span class="s6">, </span><span class="s5">0</span><span class="s6">, </span><span class="s2">canvas.width</span><span class="s6">, </span><span class="s2">canvas.height)</span><span class="s6">;</span>
+        <span class="s2">drawChargeBar()</span><span class="s6">;</span>
+        <span class="s2">drawCharge()</span><span class="s6">;</span>
+        <span class="s2">drawPlayerTriangle()</span><span class="s6">;</span>
+        <span class="s6">if </span><span class="s4">(leftSideUpgradeLevel &gt; </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">drawLeftSideTriangle()</span><span class="s6">;</span>
+            <span class="s2">leftSideBlast[leftSideCopy] = </span><span class="s6">new </span><span class="s2">leftSideBlaster(leftSideBlasterX[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">2.5</span><span class="s6">, </span><span class="s2">leftSideBlasterY[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">10</span><span class="s6">, </span><span class="s5">1</span><span class="s6">, </span><span class="s5">1</span><span class="s4">)</span><span class="s6">;</span>
+            <span class="s2">leftSideCopy++</span><span class="s6">;</span>
+            <span class="s2">drawLeftSideBlaster()</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s6">if </span><span class="s4">(rightSideUpgradeLevel &gt; </span><span class="s5">0</span><span class="s4">) {</span>
+            <span class="s2">drawRightSideTriangle()</span><span class="s6">;</span>
+            <span class="s2">rightSideBlast[rightSideCopy] = </span><span class="s6">new </span><span class="s2">rightSideBlaster(rightSideBlasterX[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">2.5</span><span class="s6">, </span><span class="s2">rightSideBlasterY[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">10</span><span class="s6">, </span><span class="s5">1</span><span class="s6">, </span><span class="s5">1</span><span class="s4">)</span><span class="s6">;</span>
+            <span class="s2">rightSideCopy++</span><span class="s6">;</span>
+            <span class="s2">drawRightSideBlaster()</span><span class="s6">;</span>
+        <span class="s4">}</span>
+        <span class="s2">drawEnemy()</span><span class="s6">;</span>
+        <span class="s2">drawEnemyHealth()</span><span class="s6">;</span>
+        <span class="s2">drawText()</span><span class="s6">;</span>
+        <span class="s2">respawnEnemy()</span><span class="s6">;</span>
+        <span class="s6">if </span><span class="s4">(upPressed) {</span>
+            <span class="s2">drawBlasterNow = </span><span class="s6">true;</span>
+            <span class="s2">blaster[copy] = </span><span class="s6">new </span><span class="s2">Blaster(playerX[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">2.5</span><span class="s6">, </span><span class="s2">playerY[</span><span class="s5">0</span><span class="s4">] - </span><span class="s5">10</span><span class="s6">, </span><span class="s5">1</span><span class="s6">, </span><span class="s5">1</span><span class="s4">)</span><span class="s6">;</span>
+            <span class="s2">copy++</span><span class="s6">;</span>
+            <span class="s6">if </span><span class="s4">(limit == (skip - </span><span class="s5">1</span><span class="s4">)) {</span>
+                <span class="s2">limit = Math.floor((copy % skip))</span><span class="s6">;</span>
+                <span class="s2">chargeX = </span><span class="s5">10</span><span class="s6">;</span>
+                <span class="s2">chargeWidth = Math.floor(</span><span class="s5">300</span><span class="s4">/skip)</span><span class="s6">;</span>
+            <span class="s4">} </span><span class="s6">else </span><span class="s4">{</span>
+                <span class="s2">chargeRects[limit] = </span><span class="s6">new </span><span class="s2">Charge(chargeX</span><span class="s6">, </span><span class="s2">chargeWidth)</span>
+                <span class="s2">chargeX += chargeWidth</span><span class="s6">;</span>
+                <span class="s2">limit++</span><span class="s6">;</span>
+            <span class="s4">}</span>
+        <span class="s4">}</span>
+
+
+        <span class="s2">collisionDetection()</span><span class="s6">;</span>
+
+        <span class="s6">if </span><span class="s4">(drawBlasterNow) {</span>
+            <span class="s2">drawBlaster()</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s6">if </span><span class="s4">(enemyY &lt; </span><span class="s5">10</span><span class="s4">) {</span>
+            <span class="s2">enemyY++</span><span class="s6">;</span>
+        <span class="s4">}</span>
+
+        <span class="s2">upgrade()</span><span class="s6">;</span>
+
+        <span class="s2">requestAnimationFrame(draw)</span><span class="s6">;</span>
+
+    <span class="s4">}</span>
+
+    <span class="s2">draw()</span><span class="s6">;</span>
+
+<span class="s0">&lt;/script&gt;</span>
+
+<span class="s0">&lt;/body&gt;</span>
+<span class="s0">&lt;/html&gt;</span></pre>
+</body>
+</html>
